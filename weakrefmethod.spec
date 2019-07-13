@@ -4,7 +4,7 @@
 #
 Name     : weakrefmethod
 Version  : 1.0.3
-Release  : 3
+Release  : 4
 URL      : https://files.pythonhosted.org/packages/99/82/73a21e3eab9a1ff76d12375f7301fba5c6325b9598eed0ae5b0cf5243656/weakrefmethod-1.0.3.tar.gz
 Source0  : https://files.pythonhosted.org/packages/99/82/73a21e3eab9a1ff76d12375f7301fba5c6325b9598eed0ae5b0cf5243656/weakrefmethod-1.0.3.tar.gz
 Summary  : A WeakMethod class for storing bound methods using weak references.
