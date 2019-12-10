@@ -4,14 +4,15 @@
 #
 Name     : weakrefmethod
 Version  : 1.0.3
-Release  : 6
+Release  : 7
 URL      : https://files.pythonhosted.org/packages/99/82/73a21e3eab9a1ff76d12375f7301fba5c6325b9598eed0ae5b0cf5243656/weakrefmethod-1.0.3.tar.gz
 Source0  : https://files.pythonhosted.org/packages/99/82/73a21e3eab9a1ff76d12375f7301fba5c6325b9598eed0ae5b0cf5243656/weakrefmethod-1.0.3.tar.gz
 Summary  : A WeakMethod class for storing bound methods using weak references.
 Group    : Development/Tools
 License  : Python-2.0
-Requires: weakrefmethod-python3
-Requires: weakrefmethod-python
+Requires: weakrefmethod-license = %{version}-%{release}
+Requires: weakrefmethod-python = %{version}-%{release}
+Requires: weakrefmethod-python3 = %{version}-%{release}
 BuildRequires : buildreq-distutils3
 BuildRequires : unittest2
 
@@ -20,10 +21,18 @@ weakrefmethod
 =============
 Backport of WeakMethod from Python 3.4 to Python 2.6+
 
+%package license
+Summary: license components for the weakrefmethod package.
+Group: Default
+
+%description license
+license components for the weakrefmethod package.
+
+
 %package python
 Summary: python components for the weakrefmethod package.
 Group: Default
-Requires: weakrefmethod-python3
+Requires: weakrefmethod-python3 = %{version}-%{release}
 
 %description python
 python components for the weakrefmethod package.
@@ -40,29 +49,43 @@ python3 components for the weakrefmethod package.
 
 %prep
 %setup -q -n weakrefmethod-1.0.3
+cd %{_builddir}/weakrefmethod-1.0.3
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1533874338
-python3 setup.py build -b py3
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1576017624
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -fno-lto "
+export FCFLAGS="$CFLAGS -fno-lto "
+export FFLAGS="$CFLAGS -fno-lto "
+export CXXFLAGS="$CXXFLAGS -fno-lto "
+export MAKEFLAGS=%{?_smp_mflags}
+python3 setup.py build
 
 %check
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-PYTHONPATH=%{buildroot}/usr/lib/python3.7/site-packages python3 setup.py test
+PYTHONPATH=%{buildroot}$(python -c "import sys; print(sys.path[-1])") python setup.py test
 %install
+export MAKEFLAGS=%{?_smp_mflags}
 rm -rf %{buildroot}
-python3 -tt setup.py build -b py3 install --root=%{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/weakrefmethod
+cp %{_builddir}/weakrefmethod-1.0.3/LICENSE %{buildroot}/usr/share/package-licenses/weakrefmethod/903854d1e304992e931b07e4c076491e35e35e71
+python3 -tt setup.py build  install --root=%{buildroot}
 echo ----[ mark ]----
 cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
 echo ----[ mark ]----
 
 %files
 %defattr(-,root,root,-)
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/weakrefmethod/903854d1e304992e931b07e4c076491e35e35e71
 
 %files python
 %defattr(-,root,root,-)
